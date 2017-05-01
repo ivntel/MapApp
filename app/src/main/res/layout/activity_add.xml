@@ -33,7 +33,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="60dp"
                     android:text="Submit Address"
-                    android:onClick="buttonOnClickEnterItem"
+                    android:onClick="buttonOnClickEnterAddress"
                     android:id="@+id/addressButton"
                     android:padding="20dp"
                     android:textColor="#FFFFFF"
