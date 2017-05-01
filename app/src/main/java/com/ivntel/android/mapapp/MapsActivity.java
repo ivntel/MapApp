@@ -38,7 +38,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public String description;
     public double lat;
     public double lng;
-    ArrayList<HashMap<String,Object>> myLocationList = new ArrayList<HashMap<String,Object>>();
+    ArrayList<HashMap<String, Object>> myLocationList = new ArrayList<HashMap<String, Object>>();
 
 
     @Override
@@ -99,21 +99,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return info;
             }
         });
+
+        ArrayList<HashMap<String, Object>> locationList = dbHandler.getLocationInfo();
         //array brought in from Database
-        for(HashMap myLocation: myLocationList){
-                address = myLocation.get(ADDRESS_STRING);
-                description = myLocation.get(LOCATION_DESCRIPTION);
+        for (HashMap myLocation : locationList) {
+            Double latitudeVal = (Double) myLocation.get(LATITUDE_VALUE);
+            Double longitudeVal = (Double) myLocation.get(LONGITUDE_VALUE);
+            String address = (String) myLocation.get(ADDRESS_STRING);
+            String description = (String) myLocation.get(LOCATION_DESCRIPTION);
 
-                LatLng location = new LatLng(myLocation.get(LATITUDE_VALUE), myLocation.get(LONGITUDE_VALUE));
-                mMap.addMarker(new MarkerOptions().position(location).title("Location Description").snippet("Address: " + address + "\n" + "Description: " + description).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 2));//zoom level = 16 goes up to 21
+
+            LatLng location = new LatLng(latitudeVal, longitudeVal);
+            mMap.addMarker(new MarkerOptions().position(location).title("Location Description").snippet("Address: " + address + "\n" + "Description: " + description).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 2));//zoom level = 16 goes up to 21*/
+
+
+            //LatLng sydney = new LatLng(-34, 151);
+
+            //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+            //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         }
-
-        LatLng sydney = new LatLng(-34, 151);
-
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
+
     public void buttonOnClickLocation(View v) {
         Intent i = new Intent(MapsActivity.this, AddActivity.class);
         startActivity(i);

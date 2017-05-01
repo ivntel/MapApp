@@ -52,9 +52,15 @@ public class AddActivity extends AppCompatActivity {
 
         Geocoder gc = new Geocoder(this);
         List<Address> list = gc.getFromLocationName(mAddress, 1);
-        Address add = list.get(0);
-        lat = add.getLatitude();
-        lng = add.getLongitude();
+        if(list.size() > 0){
+            Address add = list.get(0);
+            lat = add.getLatitude();
+            lng = add.getLongitude();
+        }
+        else {
+            Toast.makeText(this, "Invalid address", Toast.LENGTH_LONG).show();
+            addressText.setText("Reinsert Address");
+        }
     }
 
     public void buttonOnClickEnterDescription(View v) {
@@ -67,15 +73,17 @@ public class AddActivity extends AppCompatActivity {
     public void buttonOnClickLocation(View v) {
 
         if(mAddress != null && mDescription != null) {
-            Toast.makeText(this, "All good", Toast.LENGTH_LONG).show();
             Log.d("Value", "mAddress: " + mAddress + " mDescription: " + mDescription + " lat: " + lat + " lng: " + lng);
             int returnValue = dbHandler.addLocationInfo(lat, lng, mAddress, mDescription);
 
             if(returnValue == 1){
                 Toast.makeText(this, "Duplicate Address", Toast.LENGTH_LONG).show();
+                addressText.setText("Reinsert Address");
             }
             else if(returnValue == 2){
                 Toast.makeText(this, "Address Submitted", Toast.LENGTH_LONG).show();
+                Intent i = new Intent(AddActivity.this, MapsActivity.class);
+                startActivity(i);
             }
         }
         else{
