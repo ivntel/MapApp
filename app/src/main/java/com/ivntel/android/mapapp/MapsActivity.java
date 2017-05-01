@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,18 +29,16 @@ import static com.ivntel.android.mapapp.DatabaseHandler.ADDRESS_STRING;
 import static com.ivntel.android.mapapp.DatabaseHandler.LATITUDE_VALUE;
 import static com.ivntel.android.mapapp.DatabaseHandler.LOCATION_DESCRIPTION;
 import static com.ivntel.android.mapapp.DatabaseHandler.LONGITUDE_VALUE;
+import static com.ivntel.android.mapapp.R.id.map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private Button button;
-    private DatabaseHandler dbHandler = new DatabaseHandler(this);
-    public String address;
-    public String description;
-    public double lat;
-    public double lng;
-    ArrayList<HashMap<String, Object>> myLocationList = new ArrayList<HashMap<String, Object>>();
+    private Button delete;
+    private Button share;
 
+    private DatabaseHandler dbHandler = new DatabaseHandler(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +46,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
 
         button = (Button) findViewById(R.id.button);
+        delete = (Button) findViewById(R.id.delete);
+        share = (Button) findViewById(R.id.share);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(map);
         mapFragment.getMapAsync(this);
     }
 
@@ -112,17 +113,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             LatLng location = new LatLng(latitudeVal, longitudeVal);
             mMap.addMarker(new MarkerOptions().position(location).title("Location Description").snippet("Address: " + address + "\n" + "Description: " + description).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 2));//zoom level = 16 goes up to 21*/
-
-
-            //LatLng sydney = new LatLng(-34, 151);
-
-            //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-            //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         }
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
+        {
+
+            @Override
+            public boolean onMarkerClick(Marker arg0) {
+                delete.setVisibility(View.VISIBLE);
+                share.setVisibility(View.VISIBLE);
+                return true;
+            }
+
+        });
     }
 
     public void buttonOnClickLocation(View v) {
         Intent i = new Intent(MapsActivity.this, AddActivity.class);
         startActivity(i);
         }
+    public void buttonOnClickDelete(View v) {
+        Toast.makeText(this, "Delete", Toast.LENGTH_LONG).show();
+
+    }
+    public void buttonOnClickShare(View v) {
+        Toast.makeText(this, "Share", Toast.LENGTH_LONG).show();
+    }
 }

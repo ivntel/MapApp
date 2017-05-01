@@ -24,5 +24,35 @@
         android:shadowDx="0"
         android:shadowDy="0"
         android:shadowRadius="5"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="buttonOnClickDelete"
+        android:padding="20dp"
+        android:text="Delete"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:id="@+id/delete"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:layout_below="@+id/button"
+        android:visibility="invisible" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="buttonOnClickShare"
+        android:padding="20dp"
+        android:text="Share"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:id="@+id/share"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:layout_below="@+id/delete"
+        android:visibility="invisible"/>
 
 </RelativeLayout>
