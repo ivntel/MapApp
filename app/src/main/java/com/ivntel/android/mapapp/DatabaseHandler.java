@@ -124,6 +124,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return locationList;
     }
 
+    public boolean deleteLocation(double lat, double lng){
+        SQLiteDatabase data = this.getWritableDatabase();
+        String table = LOCATION_TABLE_NAME;
+        String whereClause = LATITUDE_VALUE + "=? AND " + LONGITUDE_VALUE + "=?";
+        String whereArgs[] = new String[] {String.valueOf(lat), String.valueOf(lng)};
+
+        int count = data.delete(table, whereClause, whereArgs);
+        data.close();
+
+        if(count == 1){
+            return true;
+        }
+
+        return false;
+    }
+
     public void resetLocationEntry() {
         SQLiteDatabase db = this.getWritableDatabase();
         // Delete All Rows

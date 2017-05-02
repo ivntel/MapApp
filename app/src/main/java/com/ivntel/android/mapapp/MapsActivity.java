@@ -37,6 +37,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button button;
     private Button delete;
     private Button share;
+    private LatLng currentLatLng;
+    private Marker currentMarker;
 
     private DatabaseHandler dbHandler = new DatabaseHandler(this);
 
@@ -117,9 +119,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
         {
-
             @Override
             public boolean onMarkerClick(Marker arg0) {
+                currentMarker = arg0;
+                currentLatLng = arg0.getPosition(); //
                 delete.setVisibility(View.VISIBLE);
                 share.setVisibility(View.VISIBLE);
                 return true;
@@ -134,9 +137,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     public void buttonOnClickDelete(View v) {
         Toast.makeText(this, "Delete", Toast.LENGTH_LONG).show();
-
+        double currentLatitude = currentLatLng.latitude;
+        double currentLongitude = currentLatLng.longitude;
+        boolean returnValue = dbHandler.deleteLocation(currentLatitude, currentLongitude);
+        if(returnValue){
+            currentMarker.remove();
+        }
+        else{
+            Toast.makeText(this, "Not Deleted", Toast.LENGTH_LONG).show();
+        }
     }
     public void buttonOnClickShare(View v) {
         Toast.makeText(this, "Share", Toast.LENGTH_LONG).show();
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        //sendIntent.putExtra(Intent.EXTRA_TEXT, "Address: " + currentMarker.getTitle() + "\n" + "Description: " + currentLatLng.);
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
     }
 }
