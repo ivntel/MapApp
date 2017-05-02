@@ -2,10 +2,15 @@ package com.ivntel.android.mapapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +27,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import static com.ivntel.android.mapapp.DatabaseHandler.ADDRESS_STRING;
@@ -39,6 +47,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button share;
     private LatLng currentLatLng;
     private Marker currentMarker;
+    String[] permissions = {"android.permission.WRITE_EXTERNAL_STORAGE"};
+    Bitmap screenShot;
+    MarshmallowPermission marshMallowPermission;
 
     private DatabaseHandler dbHandler = new DatabaseHandler(this);
 
@@ -99,6 +110,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 info.addView(title);
                 info.addView(snippet);
 
+                mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                    public void onInfoWindowClick(Marker marker) {
+                        currentMarker = marker;
+                        currentLatLng = marker.getPosition(); //
+                        delete.setVisibility(View.VISIBLE);
+                        share.setVisibility(View.VISIBLE);
+                        //return true;
+                    }
+                });
                 return info;
             }
         });
@@ -117,42 +137,93 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 2));//zoom level = 16 goes up to 21*/
         }
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
-        {
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
-            public boolean onMarkerClick(Marker arg0) {
-                currentMarker = arg0;
-                currentLatLng = arg0.getPosition(); //
-                delete.setVisibility(View.VISIBLE);
-                share.setVisibility(View.VISIBLE);
-                return true;
+            public void onMapClick(LatLng latLng){
+                delete.setVisibility(View.INVISIBLE);
+                share.setVisibility(View.INVISIBLE);
             }
-
         });
     }
 
     public void buttonOnClickLocation(View v) {
         Intent i = new Intent(MapsActivity.this, AddActivity.class);
         startActivity(i);
-        }
+    }
+
     public void buttonOnClickDelete(View v) {
         Toast.makeText(this, "Delete", Toast.LENGTH_LONG).show();
         double currentLatitude = currentLatLng.latitude;
         double currentLongitude = currentLatLng.longitude;
         boolean returnValue = dbHandler.deleteLocation(currentLatitude, currentLongitude);
-        if(returnValue){
+        if (returnValue) {
             currentMarker.remove();
-        }
-        else{
+        } else {
             Toast.makeText(this, "Not Deleted", Toast.LENGTH_LONG).show();
         }
     }
+
     public void buttonOnClickShare(View v) {
         Toast.makeText(this, "Share", Toast.LENGTH_LONG).show();
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        //sendIntent.putExtra(Intent.EXTRA_TEXT, "Address: " + currentMarker.getTitle() + "\n" + "Description: " + currentLatLng.);
-        sendIntent.setType("text/plain");
-        startActivity(sendIntent);
+        marshMallowPermission = new MarshmallowPermission(this);
+
+        if (!marshMallowPermission.checkPermissionForExternalStorage()) {
+            marshMallowPermission.requestPermissionForExternalStorage();
+        } else {
+            GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {
+                @Override
+                public void onSnapshotReady(Bitmap snapshot) {
+                    try {
+                        View mView = findViewById(android.R.id.content).getRootView();
+                        mView.setDrawingCacheEnabled(true);
+                        Bitmap backBitmap = mView.getDrawingCache();
+                        Bitmap bmOverlay = Bitmap.createBitmap(
+                                backBitmap.getWidth(), backBitmap.getHeight(),
+                                Bitmap.Config.ARGB_8888);
+                        Canvas canvas = new Canvas(bmOverlay);
+                        canvas.drawBitmap(backBitmap, 0, 0, null);
+                        canvas.drawBitmap(snapshot, 0, 160, null);
+
+                        File sampleDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "/MapScreenShots");
+
+                        Log.i("MyFile", "" + sampleDir);
+
+                        // Created directory if doesn't exist
+                        if (!sampleDir.exists()) {
+                            sampleDir.mkdirs();
+                        }
+                        Date d = new Date();
+                        File fn = new File(sampleDir + "/" + "Map" + d.getTime() + ".png");
+                        FileOutputStream out = new FileOutputStream(fn);
+                        bmOverlay.compress(Bitmap.CompressFormat.PNG, 100, out);
+
+                        Intent share = new Intent(Intent.ACTION_SEND);
+                        share.setType("image/*");
+
+                        File imageFileToShare = new File(fn.getAbsolutePath());
+
+                        Uri uri = Uri.fromFile(imageFileToShare);
+                        share.putExtra(android.content.Intent.EXTRA_SUBJECT, "");
+                        share.putExtra(android.content.Intent.EXTRA_TEXT, "This is the Address and Description pertaining to this pin's location");
+                        share.putExtra(Intent.EXTRA_STREAM, uri);
+                        startActivity(Intent.createChooser(share, "Share Screenshot Using:"));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            mMap.snapshot(callback);
+        }
     }
 }
+
+        //String address = "address";
+        //String description = "description";
+
+        /*Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Address: " + address + "\n" + "Description: " + description);
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);*/
+
+
