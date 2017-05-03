@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,12 +38,12 @@ import static com.ivntel.android.mapapp.DatabaseHandler.ADDRESS_STRING;
 import static com.ivntel.android.mapapp.DatabaseHandler.LATITUDE_VALUE;
 import static com.ivntel.android.mapapp.DatabaseHandler.LOCATION_DESCRIPTION;
 import static com.ivntel.android.mapapp.DatabaseHandler.LONGITUDE_VALUE;
+import static com.ivntel.android.mapapp.R.id.fab;
 import static com.ivntel.android.mapapp.R.id.map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private Button button;
     private Button delete;
     private Button share;
     private LatLng currentLatLng;
@@ -50,6 +51,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String[] permissions = {"android.permission.WRITE_EXTERNAL_STORAGE"};
     Bitmap screenShot;
     MarshmallowPermission marshMallowPermission;
+    //This is an example of how you would bring in string variables from the strings.xml folder
+    //String mystring = getResources().getString(R.string.mystring);
 
     private DatabaseHandler dbHandler = new DatabaseHandler(this);
 
@@ -58,16 +61,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        button = (Button) findViewById(R.id.button);
-        delete = (Button) findViewById(R.id.delete);
-        share = (Button) findViewById(R.id.share);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(map);
         mapFragment.getMapAsync(this);
-    }
 
-
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                Toast.makeText(MapsActivity.this, "Add Location", Toast.LENGTH_LONG).show();
+                Intent i = new Intent(MapsActivity.this, AddActivity.class);
+                startActivity(i);
+            }
+        });
+        }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -114,6 +121,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onInfoWindowClick(Marker marker) {
                         currentMarker = marker;
                         currentLatLng = marker.getPosition(); //
+                        FloatingActionButton share = (FloatingActionButton) findViewById(R.id.share);
+                        FloatingActionButton delete = (FloatingActionButton) findViewById(R.id.delete);
                         delete.setVisibility(View.VISIBLE);
                         share.setVisibility(View.VISIBLE);
                         //return true;
@@ -140,15 +149,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng){
+                FloatingActionButton share = (FloatingActionButton) findViewById(R.id.share);
+                FloatingActionButton delete = (FloatingActionButton) findViewById(R.id.delete);
                 delete.setVisibility(View.INVISIBLE);
                 share.setVisibility(View.INVISIBLE);
             }
         });
-    }
-
-    public void buttonOnClickLocation(View v) {
-        Intent i = new Intent(MapsActivity.this, AddActivity.class);
-        startActivity(i);
     }
 
     public void buttonOnClickDelete(View v) {
@@ -216,7 +222,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 }
-
+        //sharing of just text
         //String address = "address";
         //String description = "description";
 

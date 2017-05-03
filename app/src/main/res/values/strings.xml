@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">Map App</string>
     <string name="title_activity_maps">Map</string>
+    <string name="add_hint">Enter Address</string>
+    <string name="desc_hint">Enter Description</string>
+    <string name="sub_add_text">Submit Address</string>
+    <string name="sub_desc_text">Submit Description</string>
+    <string name="submit">Submit</string>
+    <string name="no_add_entered">No Address Entered</string>
+    <string name="no_desc_entered">No Description Entered</string>
 </resources>
