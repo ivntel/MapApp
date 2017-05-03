@@ -32,6 +32,8 @@ public class AddActivity extends AppCompatActivity {
     private DatabaseHandler dbHandler = new DatabaseHandler(this);
     public double lat;
     public double lng;
+    private static final String KEY_TEXT_VALUE1 = "textValue1";
+    private static final String KEY_TEXT_VALUE2 = "textValue2";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,19 @@ public class AddActivity extends AppCompatActivity {
         description = (EditText) findViewById(R.id.description);
         addressText = (TextView) findViewById(R.id.addressText);
         descriptionText = (TextView) findViewById(R.id.descriptionText);
+
+        if (savedInstanceState != null) {
+            CharSequence savedText1 = savedInstanceState.getCharSequence(KEY_TEXT_VALUE1);
+            CharSequence savedText2 = savedInstanceState.getCharSequence(KEY_TEXT_VALUE2);
+            addressText.setText(savedText1);
+            descriptionText.setText(savedText2);
+        }
+    }
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putCharSequence(KEY_TEXT_VALUE1, addressText.getText());
+        outState.putCharSequence(KEY_TEXT_VALUE2, descriptionText.getText());
     }
 
     public void buttonOnClickEnterAddress(View v) throws IOException {
