@@ -1,7 +1,10 @@
 package com.ivntel.android.mapapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -49,6 +52,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String[] permissions = {"android.permission.WRITE_EXTERNAL_STORAGE"};
     Bitmap screenShot;
     MarshmallowPermission marshMallowPermission;
+    private static final String KEY_TEXT_VALUE = "textValue";
     //This is an example of how you would bring in string variables from the strings.xml folder
     //String mystring = getResources().getString(R.string.mystring);
 
@@ -72,7 +76,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(i);
             }
         });
-        }
+    }
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -122,6 +127,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         FloatingActionButton delete = (FloatingActionButton) findViewById(R.id.delete);
                         delete.setVisibility(View.VISIBLE);
                         share.setVisibility(View.VISIBLE);
+
+                        /*int orientation = getApplicationContext().getResources().getConfiguration().orientation;
+                        if(orientation == 0){
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                        }
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);*/
                         //return true;
                     }
                 });
@@ -132,6 +143,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         FloatingActionButton delete = (FloatingActionButton) findViewById(R.id.delete);
                         delete.setVisibility(View.INVISIBLE);
                         share.setVisibility(View.INVISIBLE);
+
+                        /*int orientation = getApplicationContext().getResources().getConfiguration().orientation;
+                        if(orientation == 0 || orientation == 2){
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                        }
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);*/
                         return false;
                     }
                 });
@@ -160,6 +177,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 FloatingActionButton delete = (FloatingActionButton) findViewById(R.id.delete);
                 delete.setVisibility(View.INVISIBLE);
                 share.setVisibility(View.INVISIBLE);
+                /*int orientation = getApplicationContext().getResources().getConfiguration().orientation;
+                if(orientation == 1 || orientation == 0){
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
+                }*/
             }
         });
     }
