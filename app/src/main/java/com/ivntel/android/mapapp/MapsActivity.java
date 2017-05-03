@@ -44,8 +44,6 @@ import static com.ivntel.android.mapapp.R.id.map;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private Button delete;
-    private Button share;
     private LatLng currentLatLng;
     private Marker currentMarker;
     String[] permissions = {"android.permission.WRITE_EXTERNAL_STORAGE"};
@@ -87,7 +85,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         // Add a marker in Sydney and move the camera
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
@@ -126,6 +123,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         delete.setVisibility(View.VISIBLE);
                         share.setVisibility(View.VISIBLE);
                         //return true;
+                    }
+                });
+                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        FloatingActionButton share = (FloatingActionButton) findViewById(R.id.share);
+                        FloatingActionButton delete = (FloatingActionButton) findViewById(R.id.delete);
+                        delete.setVisibility(View.INVISIBLE);
+                        share.setVisibility(View.INVISIBLE);
+                        return false;
                     }
                 });
                 return info;
