@@ -52,11 +52,21 @@ public class AddActivity extends AppCompatActivity {
             descriptionText.setText(savedText2);
         }
     }
+
     @Override
     protected void onSaveInstanceState (Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putCharSequence(KEY_TEXT_VALUE1, addressText.getText());
         outState.putCharSequence(KEY_TEXT_VALUE2, descriptionText.getText());
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        // code here to show dialog
+        //super.onBackPressed();  // optional depending on your needs
+        Intent refresh = new Intent(AddActivity.this, MapsActivity.class);
+        startActivity(refresh);
     }
 
     public void buttonOnClickEnterAddress(View v) throws IOException {

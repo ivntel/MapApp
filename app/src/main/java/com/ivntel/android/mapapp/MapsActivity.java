@@ -190,6 +190,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double currentLatitude = currentLatLng.latitude;
         double currentLongitude = currentLatLng.longitude;
         boolean returnValue = dbHandler.deleteLocation(currentLatitude, currentLongitude);
+        FloatingActionButton share = (FloatingActionButton) findViewById(R.id.share);
+        FloatingActionButton delete = (FloatingActionButton) findViewById(R.id.delete);
+        delete.setVisibility(View.INVISIBLE);
+        share.setVisibility(View.INVISIBLE);
         if (returnValue) {
             currentMarker.remove();
         } else {
@@ -200,6 +204,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void buttonOnClickShare(View v) {
         Toast.makeText(this, "Share", Toast.LENGTH_LONG).show();
         marshMallowPermission = new MarshmallowPermission(this);
+        FloatingActionButton share = (FloatingActionButton) findViewById(R.id.share);
+        FloatingActionButton delete = (FloatingActionButton) findViewById(R.id.delete);
+        delete.setVisibility(View.INVISIBLE);
+        share.setVisibility(View.INVISIBLE);
 
         if (!marshMallowPermission.checkPermissionForExternalStorage()) {
             marshMallowPermission.requestPermissionForExternalStorage();
@@ -250,14 +258,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 }
-        //sharing of just text
-        //String address = "address";
-        //String description = "description";
 
-        /*Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "Address: " + address + "\n" + "Description: " + description);
-        sendIntent.setType("text/plain");
-        startActivity(sendIntent);*/
 
 
